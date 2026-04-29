@@ -101,17 +101,17 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-slate-100 text-primary shadow-sm">
+              <div className="p-4 sm:p-6 bg-slate-50 rounded-xl border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-slate-100 text-primary shadow-sm shrink-0">
                     <span className="material-symbols-outlined">description</span>
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="font-label-md text-slate-900">Local Documentation Service</p>
                     <p className="text-xs text-slate-500 uppercase tracking-wider">Flat fee of $150.00</p>
                   </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="relative inline-flex items-center cursor-pointer self-end sm:self-auto shrink-0">
                   <input 
                     checked={documentation}
                     onChange={(e) => setDocumentation(e.target.checked)}
