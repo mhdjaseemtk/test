@@ -25,7 +25,7 @@ export default function Home() {
     <>
       {/* TopNavBar */}
       <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
-        <nav className="max-w-7xl mx-auto h-16 px-4 md:px-8 flex items-center justify-between font-manrope antialiased text-sm tracking-tight">
+        <nav className="max-w-7xl mx-auto h-16 px-8 flex items-center justify-between font-manrope antialiased text-sm tracking-tight">
           <div className="text-xl font-bold tracking-tighter text-slate-900">GlobalLogix</div>
           <div className="hidden md:flex items-center gap-8">
             <a className="text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1 hover:text-indigo-500 transition-all duration-200" href="#">Solutions</a>
@@ -45,7 +45,7 @@ export default function Home() {
         </nav>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-8 py-12">
         {/* Hero Section */}
         <section className="mb-12 animate-in fade-in slide-in-from-bottom-2 duration-700">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -78,35 +78,32 @@ export default function Home() {
                   <label className="font-label-md text-slate-700">Gross Weight (kg)</label>
                   <div className="relative group">
                     <input 
-                      className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-standard" 
+                      className="w-full h-14 bg-slate-50 border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-standard" 
                       placeholder="0.00" 
                       type="number" 
                       value={weight}
                       onChange={(e) => setWeight(e.target.value ? parseFloat(e.target.value) : "")}
-                      min="0"
                     />
-                    <span className="absolute right-4 top-4 text-slate-400 font-label-md pointer-events-none">kg</span>
+                    <span className="absolute right-4 top-4 text-slate-400 font-label-md">kg</span>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="font-label-md text-slate-700">Total Volume (CBM)</label>
                   <div className="relative group">
                     <input 
-                      className="w-full h-14 bg-slate-50 border border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-standard" 
+                      className="w-full h-14 bg-slate-50 border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-standard" 
                       placeholder="0.00" 
                       type="number" 
                       value={volume}
                       onChange={(e) => setVolume(e.target.value ? parseFloat(e.target.value) : "")}
-                      min="0"
-                      step="0.01"
                     />
-                    <span className="absolute right-4 top-4 text-slate-400 font-label-md pointer-events-none">m³</span>
+                    <span className="absolute right-4 top-4 text-slate-400 font-label-md">m³</span>
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="p-6 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-slate-100 text-primary shadow-sm flex-shrink-0">
+                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-slate-100 text-primary shadow-sm">
                     <span className="material-symbols-outlined">description</span>
                   </div>
                   <div>
@@ -114,7 +111,7 @@ export default function Home() {
                     <p className="text-xs text-slate-500 uppercase tracking-wider">Flat fee of $150.00</p>
                   </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                <label className="relative inline-flex items-center cursor-pointer">
                   <input 
                     checked={documentation}
                     onChange={(e) => setDocumentation(e.target.checked)}
@@ -215,7 +212,7 @@ export default function Home() {
       </main>
       {/* Footer */}
       <footer className="mt-12 bg-slate-50 border-t border-slate-200">
-        <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-6 font-manrope text-xs tracking-wide uppercase">
+        <div className="max-w-7xl mx-auto py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 font-manrope text-xs tracking-wide uppercase">
           <div className="text-lg font-bold text-slate-800 normal-case flex items-center gap-2">
             <span className="material-symbols-outlined text-indigo-700">anchor</span>
             GlobalLogix
