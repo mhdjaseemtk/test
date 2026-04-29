@@ -122,11 +122,11 @@ export default function Home() {
                 </label>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-stack-md pt-4">
-                <button type="submit" className="bg-primary text-white h-14 rounded-xl font-headline-md flex items-center justify-center gap-2 hover:bg-primary-dark transition-standard group">
-                  <span>Recalculate Quote</span>
+                <button type="submit" className="bg-primary text-white h-14 rounded-xl font-label-md md:text-base flex items-center justify-center gap-2 hover:bg-primary-dark transition-standard group px-2">
+                  <span className="whitespace-nowrap">Recalculate Quote</span>
                   <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </button>
-                <button type="button" className="bg-slate-50 text-slate-900 border border-slate-200 h-14 rounded-xl font-label-md hover:bg-slate-100 transition-standard flex items-center justify-center gap-2">
+                <button type="button" className="bg-slate-50 text-slate-900 border border-slate-200 h-14 rounded-xl font-label-md hover:bg-slate-100 transition-standard flex items-center justify-center gap-2 px-2">
                   <span className="material-symbols-outlined">bookmark</span>
                   Save Configuration
                 </button>
