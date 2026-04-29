@@ -11,6 +11,7 @@ export default function Home() {
   const [volumeError, setVolumeError] = useState("");
   const [hasCalculated, setHasCalculated] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // Load from local storage on mount if available
   useEffect(() => {
@@ -27,6 +28,11 @@ export default function Home() {
       }
     }
   }, []);
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(""), 3000);
+  };
 
   const validate = () => {
     let isValid = true;
@@ -57,6 +63,7 @@ export default function Home() {
     if (validate()) {
       setHasCalculated(true);
       setIsSaved(false);
+      showToast("Quote calculated successfully!");
     } else {
       setHasCalculated(false);
     }
@@ -67,7 +74,18 @@ export default function Home() {
       localStorage.setItem('globalLogixConfig', JSON.stringify({ weight, volume, documentation }));
       setIsSaved(true);
       setHasCalculated(true);
+      showToast("Configuration saved for later!");
       setTimeout(() => setIsSaved(false), 3000);
+    } else {
+      showToast("Please fix errors before saving");
+    }
+  };
+
+  const scrollToCalculator = () => {
+    const element = document.getElementById('calculator');
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
@@ -86,19 +104,19 @@ export default function Home() {
       {/* TopNavBar */}
       <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm">
         <nav className="max-w-7xl mx-auto h-16 px-8 flex items-center justify-between font-manrope antialiased text-sm tracking-tight">
-          <div className="text-xl font-bold tracking-tighter text-slate-900">GlobalLogix</div>
+          <div className="text-xl font-bold tracking-tighter text-slate-900 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>GlobalLogix</div>
           <div className="hidden md:flex items-center gap-8">
-            <a className="text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1 hover:text-indigo-500 transition-all duration-200" href="#">Solutions</a>
-            <a className="text-slate-500 font-medium hover:text-indigo-500 transition-all duration-200" href="#">Rates</a>
-            <a className="text-slate-500 font-medium hover:text-indigo-500 transition-all duration-200" href="#">Tracking</a>
-            <a className="text-slate-500 font-medium hover:text-indigo-500 transition-all duration-200" href="#">Support</a>
+            <a className="text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1 hover:text-indigo-500 transition-all duration-200" href="#" onClick={(e) => { e.preventDefault(); showToast("Solutions directory coming soon!"); }}>Solutions</a>
+            <a className="text-slate-500 font-medium hover:text-indigo-500 transition-all duration-200" href="#" onClick={(e) => { e.preventDefault(); scrollToCalculator(); }}>Rates</a>
+            <a className="text-slate-500 font-medium hover:text-indigo-500 transition-all duration-200" href="#" onClick={(e) => { e.preventDefault(); showToast("Live tracking portal is under maintenance"); }}>Tracking</a>
+            <a className="text-slate-500 font-medium hover:text-indigo-500 transition-all duration-200" href="#" onClick={(e) => { e.preventDefault(); showToast("Support chat will be available shortly"); }}>Support</a>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3 text-slate-500 mr-2">
-              <span className="material-symbols-outlined cursor-pointer hover:text-indigo-600 transition-standard">language</span>
-              <span className="material-symbols-outlined cursor-pointer hover:text-indigo-600 transition-standard">account_circle</span>
+              <span className="material-symbols-outlined cursor-pointer hover:text-indigo-600 transition-standard" onClick={() => showToast("Language selector opened")}>language</span>
+              <span className="material-symbols-outlined cursor-pointer hover:text-indigo-600 transition-standard" onClick={() => showToast("Client login portal opened")}>account_circle</span>
             </div>
-            <button className="bg-primary text-white px-5 py-2 rounded-lg font-label-md hover:bg-primary-dark active:scale-95 transition-standard">
+            <button onClick={scrollToCalculator} className="bg-primary text-white px-5 py-2 rounded-lg font-label-md hover:bg-primary-dark active:scale-95 transition-standard">
               Get Quote
             </button>
           </div>
@@ -117,7 +135,7 @@ export default function Home() {
                 <span>Jebel Ali</span>
               </h1>
             </div>
-            <div className="bg-surface-container-high px-4 py-2 rounded-xl flex items-center gap-2 w-fit">
+            <div className="bg-surface-container-high px-4 py-2 rounded-xl flex items-center gap-2 w-fit cursor-help" onClick={() => showToast("LCL (Less than Container Load) shipping mode selected")}>
               <span className="material-symbols-outlined text-primary">sailing</span>
               <span className="font-label-md text-on-surface">Standard Ocean Freight (LCL)</span>
             </div>
@@ -125,7 +143,7 @@ export default function Home() {
         </section>
 
         {/* Main Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+        <div id="calculator" className="grid grid-cols-1 md:grid-cols-12 gap-gutter scroll-mt-24">
           {/* Left Section: Input Form */}
           <div className="md:col-span-7 lg:col-span-8 bg-white border border-slate-100 rounded-xl p-card-padding bento-shadow transition-standard hover:-translate-y-0.5">
             <div className="flex items-center gap-3 mb-8">
@@ -208,7 +226,12 @@ export default function Home() {
           {/* Right Section: Results */}
           <div className="md:col-span-5 lg:col-span-4 flex flex-col gap-gutter">
             {/* Main Cost Card */}
-            <div className="bg-indigo-900 text-white rounded-xl p-card-padding bento-shadow flex flex-col justify-between min-h-[280px] transition-standard hover:-translate-y-1">
+            <div className="bg-indigo-900 text-white rounded-xl p-card-padding bento-shadow flex flex-col justify-between min-h-[280px] transition-standard hover:-translate-y-1 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => showToast("Downloading quote PDF...")} className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white p-2 rounded-lg flex items-center justify-center transition-standard">
+                  <span className="material-symbols-outlined text-sm">download</span>
+                </button>
+              </div>
               <div>
                 <span className="font-label-caps opacity-70 mb-2 block">TOTAL ESTIMATED FREIGHT</span>
                 <div className="flex items-baseline gap-2">
@@ -274,7 +297,7 @@ export default function Home() {
               <p className="font-label-caps text-indigo-300">ESTIMATED TRANSIT</p>
               <p className="font-headline-lg">18-22 Business Days</p>
             </div>
-            <div className="absolute top-8 right-8 bg-white/20 backdrop-blur-md p-4 rounded-xl border border-white/20 text-white">
+            <div className="absolute top-8 right-8 bg-white/20 backdrop-blur-md p-4 rounded-xl border border-white/20 text-white cursor-pointer hover:bg-white/30 transition-standard" onClick={() => showToast("Carrier routing matrix loaded")}>
               <p className="text-xs opacity-80 uppercase font-bold tracking-widest mb-1">Carrier Status</p>
               <p className="text-sm font-semibold flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -287,19 +310,25 @@ export default function Home() {
       {/* Footer */}
       <footer className="mt-12 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-6 font-manrope text-xs tracking-wide uppercase">
-          <div className="text-lg font-bold text-slate-800 normal-case flex items-center gap-2">
+          <div className="text-lg font-bold text-slate-800 normal-case flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
             <span className="material-symbols-outlined text-indigo-700">anchor</span>
             GlobalLogix
           </div>
           <div className="flex flex-wrap justify-center gap-8">
-            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#">Privacy Policy</a>
-            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#">Terms of Service</a>
-            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#">Carrier Network</a>
-            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#">Documentation</a>
+            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#" onClick={(e) => { e.preventDefault(); showToast("Privacy Policy modal opened"); }}>Privacy Policy</a>
+            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#" onClick={(e) => { e.preventDefault(); showToast("Terms of Service modal opened"); }}>Terms of Service</a>
+            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#" onClick={(e) => { e.preventDefault(); showToast("Carrier Network directory opened"); }}>Carrier Network</a>
+            <a className="text-slate-500 hover:text-slate-900 transition-colors" href="#" onClick={(e) => { e.preventDefault(); showToast("API Documentation loaded"); }}>Documentation</a>
           </div>
           <p className="text-slate-500 text-center md:text-right normal-case tracking-normal">© {new Date().getFullYear()} GlobalLogix Logistics. Precise Freight Solutions.</p>
         </div>
       </footer>
+
+      {/* Global Toast Notification */}
+      <div className={`fixed bottom-6 right-6 bg-slate-900 text-white px-6 py-4 rounded-xl shadow-2xl z-[100] flex items-center gap-3 font-label-md transition-all duration-300 transform ${toastMessage ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 pointer-events-none'}`}>
+        <span className="material-symbols-outlined text-emerald-400">info</span>
+        {toastMessage}
+      </div>
     </>
   );
 }
