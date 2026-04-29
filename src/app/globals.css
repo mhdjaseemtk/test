@@ -18,19 +18,41 @@
   .bg-surface-container-high { background-color: #dce9ff; }
   .text-primary-fixed-dim { color: #c3c0ff; }
   
-  .font-body-md { font-family: 'Manrope', sans-serif; font-size: 16px; line-height: 1.6; font-weight: 400; }
-  .font-label-md { font-family: 'Manrope', sans-serif; font-size: 14px; line-height: 1.4; font-weight: 600; }
-  .font-label-caps { font-family: 'Manrope', sans-serif; font-size: 12px; line-height: 1.0; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-  .font-display-xl { font-family: 'Manrope', sans-serif; font-size: 48px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; }
-  .font-headline-md { font-family: 'Manrope', sans-serif; font-size: 24px; line-height: 1.3; font-weight: 600; }
-  .font-headline-lg { font-family: 'Manrope', sans-serif; font-size: 32px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+  .font-body-md { font-family: 'Manrope', sans-serif; font-size: 14px; line-height: 1.5; font-weight: 400; }
+  @media (min-width: 768px) { .font-body-md { font-size: 16px; line-height: 1.6; } }
+
+  .font-label-md { font-family: 'Manrope', sans-serif; font-size: 13px; line-height: 1.4; font-weight: 600; }
+  @media (min-width: 768px) { .font-label-md { font-size: 14px; } }
+
+  .font-label-caps { font-family: 'Manrope', sans-serif; font-size: 11px; line-height: 1.0; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  @media (min-width: 768px) { .font-label-caps { font-size: 12px; } }
+
+  .font-display-xl { font-family: 'Manrope', sans-serif; font-size: 32px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; }
+  @media (min-width: 768px) { .font-display-xl { font-size: 48px; line-height: 1.1; } }
+
+  .font-headline-md { font-family: 'Manrope', sans-serif; font-size: 20px; line-height: 1.3; font-weight: 600; }
+  @media (min-width: 768px) { .font-headline-md { font-size: 24px; } }
+
+  .font-headline-lg { font-family: 'Manrope', sans-serif; font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+  @media (min-width: 768px) { .font-headline-lg { font-size: 32px; } }
   
-  .gap-gutter { gap: 24px; }
-  .p-card-padding { padding: 32px; }
-  .gap-stack-lg { gap: 32px; }
-  .gap-stack-md { gap: 16px; }
-  .mt-gutter { margin-top: 24px; }
-  .space-y-stack-lg > * + * { margin-top: 32px; }
+  .gap-gutter { gap: 16px; }
+  @media (min-width: 768px) { .gap-gutter { gap: 24px; } }
+
+  .p-card-padding { padding: 20px; }
+  @media (min-width: 768px) { .p-card-padding { padding: 32px; } }
+
+  .gap-stack-lg { gap: 20px; }
+  @media (min-width: 768px) { .gap-stack-lg { gap: 32px; } }
+
+  .gap-stack-md { gap: 12px; }
+  @media (min-width: 768px) { .gap-stack-md { gap: 16px; } }
+
+  .mt-gutter { margin-top: 16px; }
+  @media (min-width: 768px) { .mt-gutter { margin-top: 24px; } }
+
+  .space-y-stack-lg > * + * { margin-top: 20px; }
+  @media (min-width: 768px) { .space-y-stack-lg > * + * { margin-top: 32px; } }
 
   /* Additional utility classes from CSS in original HTML */
   .material-symbols-outlined {
