@@ -1,25 +1,85 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Home() {
-  const [weight, setWeight] = useState(1250);
-  const [volume, setVolume] = useState(2.5);
+  const [weight, setWeight] = useState("");
+  const [volume, setVolume] = useState("");
   const [documentation, setDocumentation] = useState(true);
+  
+  const [weightError, setWeightError] = useState("");
+  const [volumeError, setVolumeError] = useState("");
+  const [hasCalculated, setHasCalculated] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Load from local storage on mount if available
+  useEffect(() => {
+    const saved = localStorage.getItem('globalLogixConfig');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.weight) setWeight(parsed.weight);
+        if (parsed.volume) setVolume(parsed.volume);
+        if (typeof parsed.documentation === 'boolean') setDocumentation(parsed.documentation);
+        setHasCalculated(true);
+      } catch (e) {
+        // ignore JSON parse errors
+      }
+    }
+  }, []);
+
+  const validate = () => {
+    let isValid = true;
+    setWeightError("");
+    setVolumeError("");
+
+    if (weight === "" || weight === null) {
+      setWeightError("Weight is required");
+      isValid = false;
+    } else if (isNaN(weight) || weight <= 0) {
+      setWeightError("Must be greater than 0");
+      isValid = false;
+    }
+
+    if (volume === "" || volume === null) {
+      setVolumeError("Volume is required");
+      isValid = false;
+    } else if (isNaN(volume) || volume <= 0) {
+      setVolumeError("Must be greater than 0");
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const handleRecalculate = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      setHasCalculated(true);
+      setIsSaved(false);
+    } else {
+      setHasCalculated(false);
+    }
+  };
+
+  const handleSave = () => {
+    if (validate()) {
+      localStorage.setItem('globalLogixConfig', JSON.stringify({ weight, volume, documentation }));
+      setIsSaved(true);
+      setHasCalculated(true);
+      setTimeout(() => setIsSaved(false), 3000);
+    }
+  };
 
   // Calculation Logic
-  const weightVal = typeof weight === "number" && weight > 0 ? weight : 0;
-  const volumeVal = typeof volume === "number" && volume > 0 ? volume : 0;
+  const weightVal = typeof weight === "number" || (typeof weight === "string" && weight !== "") ? parseFloat(weight) : 0;
+  const volumeVal = typeof volume === "number" || (typeof volume === "string" && volume !== "") ? parseFloat(volume) : 0;
 
-  const weightCBM = weightVal / 500;
+  const weightCBM = weightVal > 0 ? weightVal / 500 : 0;
   const chargeableCBM = Math.max(weightCBM, volumeVal);
   const freightCost = chargeableCBM * 265;
   const documentationCost = documentation ? 150 : 0;
   const totalCost = freightCost + documentationCost;
-
-  const handleRecalculate = (e) => {
-    e.preventDefault();
-  };
 
   return (
     <>
@@ -51,10 +111,10 @@ export default function Home() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <span className="font-label-caps text-primary tracking-widest mb-3 block">PREMIUM FREIGHT CALCULATOR</span>
-              <h1 className="font-display-xl text-slate-900 flex items-center flex-wrap gap-4">
-                Guangzhou 
-                <span className="material-symbols-outlined text-slate-300 text-4xl">east</span> 
-                Jebel Ali
+              <h1 className="font-display-xl text-slate-900 flex items-center flex-wrap gap-2 sm:gap-4">
+                <span>Guangzhou</span>
+                <span className="material-symbols-outlined text-slate-300 text-3xl sm:text-4xl mx-1 sm:mx-0 translate-y-1">east</span> 
+                <span>Jebel Ali</span>
               </h1>
             </div>
             <div className="bg-surface-container-high px-4 py-2 rounded-xl flex items-center gap-2 w-fit">
@@ -72,33 +132,45 @@ export default function Home() {
               <span className="material-symbols-outlined text-primary">analytics</span>
               <h2 className="font-headline-md text-slate-900">Shipment Details</h2>
             </div>
-            <form onSubmit={handleRecalculate} className="space-y-stack-lg">
+            <form onSubmit={handleRecalculate} className="space-y-stack-lg" noValidate>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-stack-lg">
                 <div className="space-y-2">
                   <label className="font-label-md text-slate-700">Gross Weight (kg)</label>
                   <div className="relative group">
                     <input 
-                      className="w-full h-14 bg-slate-50 border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-standard" 
-                      placeholder="0.00" 
+                      className={`w-full h-14 bg-slate-50 border rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-standard ${weightError ? 'border-red-500 bg-red-50' : 'border-slate-200'}`}
+                      placeholder="e.g. 1250" 
                       type="number" 
                       value={weight}
-                      onChange={(e) => setWeight(e.target.value ? parseFloat(e.target.value) : "")}
+                      onChange={(e) => {
+                        setWeight(e.target.value);
+                        if(weightError) setWeightError("");
+                      }}
+                      min="0.1"
+                      step="any"
                     />
                     <span className="absolute right-4 top-4 text-slate-400 font-label-md">kg</span>
                   </div>
+                  {weightError && <p className="text-red-500 text-xs font-semibold mt-1 flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">error</span> {weightError}</p>}
                 </div>
                 <div className="space-y-2">
                   <label className="font-label-md text-slate-700">Total Volume (CBM)</label>
                   <div className="relative group">
                     <input 
-                      className="w-full h-14 bg-slate-50 border-slate-200 rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-standard" 
-                      placeholder="0.00" 
+                      className={`w-full h-14 bg-slate-50 border rounded-xl px-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-standard ${volumeError ? 'border-red-500 bg-red-50' : 'border-slate-200'}`}
+                      placeholder="e.g. 2.5" 
                       type="number" 
                       value={volume}
-                      onChange={(e) => setVolume(e.target.value ? parseFloat(e.target.value) : "")}
+                      onChange={(e) => {
+                        setVolume(e.target.value);
+                        if(volumeError) setVolumeError("");
+                      }}
+                      min="0.01"
+                      step="any"
                     />
                     <span className="absolute right-4 top-4 text-slate-400 font-label-md">m³</span>
                   </div>
+                  {volumeError && <p className="text-red-500 text-xs font-semibold mt-1 flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">error</span> {volumeError}</p>}
                 </div>
               </div>
               <div className="p-4 sm:p-6 bg-slate-50 rounded-xl border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -123,12 +195,12 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-stack-md pt-4">
                 <button type="submit" className="bg-primary text-white h-14 rounded-xl font-label-md md:text-base flex items-center justify-center gap-2 hover:bg-primary-dark transition-standard group px-2">
-                  <span className="whitespace-nowrap text-xs sm:text-sm md:text-base">Recalculate Quote</span>
+                  <span className="whitespace-nowrap text-xs sm:text-sm md:text-base">Calculate Quote</span>
                   <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform text-sm sm:text-base">arrow_forward</span>
                 </button>
-                <button type="button" className="bg-slate-50 text-slate-900 border border-slate-200 h-14 rounded-xl font-label-md hover:bg-slate-100 transition-standard flex items-center justify-center gap-2 px-2">
-                  <span className="material-symbols-outlined text-sm sm:text-base">bookmark</span>
-                  <span className="whitespace-nowrap text-xs sm:text-sm md:text-base">Save Configuration</span>
+                <button type="button" onClick={handleSave} className="bg-slate-50 text-slate-900 border border-slate-200 h-14 rounded-xl font-label-md hover:bg-slate-100 transition-standard flex items-center justify-center gap-2 px-2">
+                  <span className={`material-symbols-outlined text-sm sm:text-base ${isSaved ? 'text-emerald-500' : ''}`}>{isSaved ? 'check_circle' : 'bookmark'}</span>
+                  <span className="whitespace-nowrap text-xs sm:text-sm md:text-base">{isSaved ? 'Saved!' : 'Save Configuration'}</span>
                 </button>
               </div>
             </form>
@@ -141,7 +213,9 @@ export default function Home() {
                 <span className="font-label-caps opacity-70 mb-2 block">TOTAL ESTIMATED FREIGHT</span>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-light opacity-80">$</span>
-                  <span className="font-display-xl">{totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="font-display-xl">
+                    {hasCalculated ? totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "0.00"}
+                  </span>
                 </div>
               </div>
               <div className="mt-8 space-y-3">
@@ -150,41 +224,41 @@ export default function Home() {
                   <p className="text-sm">Price includes all mandatory port fees</p>
                 </div>
                 <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
-                  <div className="bg-white h-full w-3/4"></div>
+                  <div className={`bg-white h-full transition-all duration-1000 ${hasCalculated ? 'w-full' : 'w-0'}`}></div>
                 </div>
               </div>
             </div>
             {/* Breakdown Card */}
-            <div className="bg-white border border-slate-100 rounded-xl p-card-padding bento-shadow flex-grow transition-standard hover:-translate-y-0.5">
+            <div className={`bg-white border border-slate-100 rounded-xl p-card-padding bento-shadow flex-grow transition-standard ${!hasCalculated && 'opacity-50 grayscale'}`}>
               <h3 className="font-label-caps text-slate-400 mb-6">COST BREAKDOWN</h3>
               <ul className="space-y-4">
-                <li className="flex justify-between items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg">
+                <li className="flex flex-col sm:flex-row justify-between sm:items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg gap-1">
                   <div>
                     <p className="font-label-md text-slate-900">Weight-to-CBM Ratio</p>
-                    <p className="text-xs text-slate-500">{weightVal.toLocaleString()}kg / 500</p>
+                    <p className="text-xs text-slate-500">{hasCalculated ? weightVal.toLocaleString() : "0"}kg / 500</p>
                   </div>
-                  <span className="font-label-md text-slate-900">{weightCBM.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="font-label-md text-slate-900 self-end sm:self-auto">{hasCalculated ? weightCBM.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "-"}</span>
                 </li>
-                <li className="flex justify-between items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg">
+                <li className="flex flex-col sm:flex-row justify-between sm:items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg gap-1">
                   <div>
                     <p className="font-label-md text-slate-900">Chargeable Volume</p>
                     <p className="text-xs text-slate-500">Max of Actual vs. Wt/CBM</p>
                   </div>
-                  <span className="font-label-md text-indigo-600">{chargeableCBM.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m³</span>
+                  <span className="font-label-md text-indigo-600 self-end sm:self-auto">{hasCalculated ? chargeableCBM.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "-"} m³</span>
                 </li>
-                <li className="flex justify-between items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg">
+                <li className="flex flex-col sm:flex-row justify-between sm:items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg gap-1">
                   <div>
                     <p className="font-label-md text-slate-900">Freight Rate</p>
                     <p className="text-xs text-slate-500">$265.00 per m³</p>
                   </div>
-                  <span className="font-label-md text-slate-900">${freightCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="font-label-md text-slate-900 self-end sm:self-auto">{hasCalculated ? `$${freightCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-"}</span>
                 </li>
-                <li className="flex justify-between items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg">
+                <li className="flex flex-col sm:flex-row justify-between sm:items-center py-3 border-b border-slate-50 hover:bg-slate-50 transition-standard px-2 -mx-2 rounded-lg gap-1">
                   <div>
                     <p className="font-label-md text-slate-900">Documentation</p>
                     <p className="text-xs text-slate-500">Local service {documentation ? 'enabled' : 'disabled'}</p>
                   </div>
-                  <span className="font-label-md text-slate-900">${documentationCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="font-label-md text-slate-900 self-end sm:self-auto">{hasCalculated ? `$${documentationCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-"}</span>
                 </li>
               </ul>
             </div>
